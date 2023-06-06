@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <RootNamespace>MoBro.Plugin.CoinGecko</RootNamespace>
+        <Authors>ModBros</Authors>
+        <Company>ModBros OG</Company>
+        <Product>MoBro</Product>
+        <Description>CoinGecko Plugin for MoBro</Description>
+        <IsPackable>false</IsPackable>
+        <Title>MoBro CoinGecko Plugin</Title>
+        <Copyright>(C) ModBros OG 2023</Copyright>
+        <PackageProjectUrl>www.mod-bros.com</PackageProjectUrl>
+        <VersionPrefix>0.0.1</VersionPrefix>
+        <IsPackable>false</IsPackable>
+        <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <Nullable>enable</Nullable>
+        <LangVersion>11</LangVersion>
+        <InvariantGlobalization>true</InvariantGlobalization>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Update="mobro_plugin_config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MoBro.Plugin.SDK" Version="0.1.9" PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>

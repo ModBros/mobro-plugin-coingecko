@@ -1,0 +1,11 @@
+{
+  "name": "modbros_coingecko",
+  "displayName": "CoinGecko",
+  "author": "ModBros",
+  "description": null,
+  "assembly": "Plugin.CoinGecko.dll",
+  "localization": null,
+  "settings": [
+  
+  ]
+}
