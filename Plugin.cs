@@ -70,7 +70,8 @@ public class Plugin : IMoBroPlugin
       .OfValueType(MetricValueType.Numeric)
       .WithBaseUnit(b => b
         .WithLabel($"t_currency_{_currency}_unit_label")
-        .WithAbbreviation($"t_currency_{_currency}_unit_abbrev")
+        .WithAbbreviation(GetCurrencySymbol())
+        // .WithAbbreviation($"t_currency_{_currency}_unit_abbrev")
         .Build()
       ).Build());
 
@@ -138,6 +139,26 @@ public class Plugin : IMoBroPlugin
       throw new PluginDependencyException("Failed to fetch data from CoinGecko: " + e.Message, e);
     }
   }
+
+  // temporary workaround for localization bug in service
+  private string GetCurrencySymbol() => _currency switch
+  {
+    "btc" => "BTC",
+    "eth" => "ETH",
+    "eur" => "€",
+    "usd" => "$",
+    "aud" => "A$",
+    "gbp" => "£",
+    "chf" => "CHF",
+    "pln" => "zł",
+    "cad" => "C$",
+    "huf" => "Ft",
+    "nok" => "kr",
+    "sek" => "kr",
+    "czk" => "Kč",
+    "uah" => "₴",
+    _ => throw new ArgumentOutOfRangeException()
+  };
 
   public void Dispose()
   {
