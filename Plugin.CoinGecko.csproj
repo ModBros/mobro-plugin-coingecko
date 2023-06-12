@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CoinGeckoAsyncApi" Version="1.7.0" />
         <PackageReference Include="MoBro.Plugin.SDK" Version="0.1.9" PrivateAssets="all" />
     </ItemGroup>
 

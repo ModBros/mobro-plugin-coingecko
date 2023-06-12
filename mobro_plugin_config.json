@@ -4,8 +4,90 @@
   "author": "ModBros",
   "description": null,
   "assembly": "Plugin.CoinGecko.dll",
-  "localization": null,
+  "localization": "Resources/Localization",
   "settings": [
-  
+    {
+      "type": "number",
+      "name": "s_update_frequency",
+      "label": "s_update_frequency_label",
+      "description": "s_update_frequency_desc",
+      "required": true,
+      "defaultValue": 10,
+      "min": 1
+    },
+    {
+      "type": "string",
+      "name": "s_coins",
+      "label": "s_coins_label",
+      "description": "s_coins_desc",
+      "defaultValue": "",
+      "required": false
+    },
+    {
+      "type": "select",
+      "name": "s_currency",
+      "label": "s_currency_label",
+      "description": "s_currency_desc",
+      "defaultValue": "eur",
+      "required": true,
+      "options": [
+        {
+          "label": "t_currency_btc_label",
+          "value": "btc"
+        },
+        {
+          "label": "t_currency_eth_label",
+          "value": "eth"
+        },
+        {
+          "label": "t_currency_eur_label",
+          "value": "eur"
+        },
+        {
+          "label": "t_currency_usd_label",
+          "value": "usd"
+        },
+        {
+          "label": "t_currency_aud_label",
+          "value": "aud"
+        },
+        {
+          "label": "t_currency_gbp_label",
+          "value": "gbp"
+        },
+        {
+          "label": "t_currency_chf_label",
+          "value": "chf"
+        },
+        {
+          "label": "t_currency_pln_label",
+          "value": "pln"
+        },
+        {
+          "label": "t_currency_cad_label",
+          "value": "cad"
+        },
+        {
+          "label": "t_currency_huf_label",
+          "value": "huf"
+        },
+        {
+          "label": "t_currency_nok_label",
+          "value": "nok"
+        },
+        {
+          "label": "t_currency_sek_label",
+          "value": "sek"
+        },
+        {
+          "label": "t_currency_czk_label",
+          "value": "czk"
+        },
+        {
+          "label": "t_currency_uah_label",
+          "value": "uah"
+        }
+      ]
+    }
   ]
 }
