@@ -8,7 +8,7 @@
   "settings": [
     {
       "type": "number",
-      "name": "s_update_frequency",
+      "name": "update_frequency",
       "label": "s_update_frequency_label",
       "description": "s_update_frequency_desc",
       "required": true,
@@ -17,7 +17,7 @@
     },
     {
       "type": "string",
-      "name": "s_coins",
+      "name": "coins",
       "label": "s_coins_label",
       "description": "s_coins_desc",
       "defaultValue": "",
@@ -25,10 +25,10 @@
     },
     {
       "type": "select",
-      "name": "s_currency",
+      "name": "currency",
       "label": "s_currency_label",
       "description": "s_currency_desc",
-      "defaultValue": "eur",
+      "defaultValue": "usd",
       "required": true,
       "options": [
         {

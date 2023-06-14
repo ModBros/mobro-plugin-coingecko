@@ -21,17 +21,22 @@ public class Plugin : IMoBroPlugin
 {
   private static readonly TimeSpan InitialDelay = TimeSpan.FromSeconds(5);
 
+  private const string HttpClientUserAgent = ".NET/7.0 MoBroPlugin (+https://mobro.app)";
+
+  // injected by MoBro
   private readonly IMoBroService _service;
   private readonly IMoBroScheduler _scheduler;
   private readonly IMoBroSettings _settings;
   private readonly ILogger _logger;
 
+  // CoinGecko API clients
   private readonly CoinsClient _coinsClient;
+  private readonly GlobalClient _globalClient;
 
-  private readonly TimeSpan _updateFrequency;
-  private readonly string _currency;
-
-  private string?[] _coinIds = Array.Empty<string?>();
+  // settings (set to default values)
+  private TimeSpan _updateFrequency = TimeSpan.FromMinutes(10);
+  private string _currency = "usd";
+  private string[] _coinIds = Array.Empty<string>();
 
   public Plugin(IMoBroService service, IMoBroScheduler scheduler, IMoBroSettings settings, ILogger logger)
   {
@@ -40,67 +45,84 @@ public class Plugin : IMoBroPlugin
     _settings = settings;
     _logger = logger;
 
-    _updateFrequency = TimeSpan.FromMinutes(_settings.GetValue<int>("s_update_frequency"));
-    _currency = _settings.GetValue<string>("s_currency");
-
     // the CoinGecko API requires a user agent to be set
     var httpClient = new HttpClient();
-    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(".NET/7.0 MoBroPlugin (+https://mobro.app)");
+    httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(HttpClientUserAgent);
     _coinsClient = new CoinsClient(httpClient, new JsonSerializerSettings());
+    _globalClient = new GlobalClient(httpClient, new JsonSerializerSettings());
   }
 
   public async Task InitAsync()
   {
-    // register all common items such as categories and metric types
-    RegisterCommonItems();
+    // parse settings
+    await ParseSettings();
 
-    // register all coin related metrics
-    await RegisterCoinMetrics();
+    // register all common items such as categories and metric types
+    RegisterTypesAndCategories();
+
+    // register all metrics
+    await RegisterMetrics();
 
     // schedule a recurring task to update the metrics
     _scheduler.Interval(UpdateMetrics, _updateFrequency, InitialDelay);
   }
 
-  private void RegisterCommonItems()
+  private async Task ParseSettings()
+  {
+    // update frequency
+    _updateFrequency = TimeSpan.FromMinutes(_settings.GetValue<int>(Ids.SettingUpdateFrequency));
+    _logger.LogInformation("Configured update frequency: {UpdateFrequency}", _updateFrequency);
+
+    // currency
+    _currency = _settings.GetValue<string>(Ids.SettingCurrency);
+    _logger.LogInformation("Configured currency: {Currency}", _currency);
+
+    // coins
+    var coinsCsv = _settings.GetValue<string>(Ids.SettingCoins, "");
+    if (!string.IsNullOrWhiteSpace(coinsCsv))
+    {
+      var supportedCoins = (await _coinsClient.GetCoinList())
+        .DistinctBy(c => c.Symbol)
+        .ToDictionary(c => c.Symbol, c => c.Id);
+
+      _coinIds = coinsCsv.Split(",")
+        .Select(s => s.Trim().ToLower())
+        .Select(s => supportedCoins.GetValueOrDefault(s))
+        .Where(s => s is not null)
+        .Select(s => s!)
+        .ToArray();
+    }
+
+    _logger.LogInformation("Configured coin ids: {CoinIds}", string.Join(",", _coinIds));
+  }
+
+  private void RegisterTypesAndCategories()
   {
     // register currency metric type
     _service.Register(MoBroItem.CreateMetricType()
-      .WithId(CoinMarketsExtensions.CurrencyTypeId)
-      .WithLabel($"t_currency_{_currency}_label")
+      .WithId(Ids.TypeCurrencyId)
+      .WithLabel($"{Ids.TypeCurrencyId}_{_currency}_label")
       .OfValueType(MetricValueType.Numeric)
       .WithBaseUnit(b => b
-        .WithLabel($"t_currency_{_currency}_unit_label")
+        .WithLabel($"{Ids.TypeCurrencyId}_{_currency}_unit_label")
         .WithAbbreviation(GetCurrencySymbol())
         // .WithAbbreviation($"t_currency_{_currency}_unit_abbrev")
         .Build()
       ).Build());
 
-    // register coins category 
+    // register global category
     _service.Register(MoBroItem.CreateCategory()
-      .WithId(CoinMarketsExtensions.CategoryTypeId)
-      .WithLabel("c_coins_label", "c_coins_desc")
+      .WithId(Ids.CategoryGlobalId)
+      .WithLabel($"{Ids.CategoryGlobalId}_label", $"{Ids.CategoryGlobalId}_desc")
       .Build());
   }
 
-  private async Task RegisterCoinMetrics()
+  private async Task RegisterMetrics()
   {
-    var coinsCsv = _settings.GetValue<string>("s_coins", "");
-    if (string.IsNullOrWhiteSpace(coinsCsv)) return;
+    // global metrics
+    _service.Register(GlobalDataExtensions.MapToItems());
 
-    var supportedCoins = await _coinsClient.GetCoinList();
-    var supportedCoinsDict = supportedCoins
-      .DistinctBy(c => c.Symbol)
-      .ToDictionary(c => c.Symbol, c => c.Id);
-
-    _coinIds = coinsCsv.Split(",")
-      .Select(s => s.Trim().ToLower())
-      .Select(s => supportedCoinsDict.GetValueOrDefault(s))
-      .Where(s => s != null)
-      .ToArray();
-
-    _logger.LogInformation("Set coin ids: {CoinIds}", string.Join(",", _coinIds));
-
-    // register all coin metrics
+    // coin metrics
     foreach (var cm in await GetCoinMarkets())
     {
       _service.Register(cm.MapToItems());
@@ -109,6 +131,10 @@ public class Plugin : IMoBroPlugin
 
   private void UpdateMetrics()
   {
+    // update global metrics
+    var global = _globalClient.GetGlobal().GetAwaiter().GetResult();
+    _service.UpdateMetricValues(global.Data.MapToMetricValues(_currency));
+
     // update coin metrics
     foreach (var cm in GetCoinMarkets().GetAwaiter().GetResult())
     {

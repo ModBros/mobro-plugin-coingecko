@@ -5,9 +5,9 @@ using MoBro.Plugin.CoinGecko;
 // create and start the plugin to test it locally
 var plugin = MoBroPluginBuilder
   .Create<Plugin>()
-  .WithSetting("s_update_frequency", "1")
-  .WithSetting("s_currency", "usd")
-  .WithSetting("s_coins", "btc,eth,grc")
+  .WithSetting(Ids.SettingUpdateFrequency, "1")
+  .WithSetting(Ids.SettingCurrency, "usd")
+  .WithSetting(Ids.SettingCoins, "btc,eth,grc")
   .Build();
 
 Console.ReadLine();
