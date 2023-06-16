@@ -2,7 +2,7 @@
   "s_update_frequency_label": "Update frequency",
   "s_update_frequency_desc": "Frequency in minutes to update the metrics",
   "s_coins_label": "Coins",
-  "s_coins_desc": "List of coins (symbols) to fetch (e.g.: \"BTC, ETH, GRC\")",
+  "s_coins_desc": "List of coins to fetch metrics for (e.g.: \"BTC, ETH, GRC\")",
   "s_currency_label": "Currency",
   "s_currency_desc": "The currency to display prices in",
   "t_currency_btc_label": "Bitcoin",
