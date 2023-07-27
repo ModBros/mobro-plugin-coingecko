@@ -1,6 +1,6 @@
 ﻿using System;
-using MoBro.Plugin.SDK.Testing;
 using MoBro.Plugin.CoinGecko;
+using MoBro.Plugin.SDK;
 
 // create and start the plugin to test it locally
 var plugin = MoBroPluginBuilder

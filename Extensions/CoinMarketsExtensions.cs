@@ -10,7 +10,7 @@ namespace MoBro.Plugin.CoinGecko.Extensions;
 
 public static class CoinMarketsExtensions
 {
-  public static IEnumerable<IMoBroItem> MapToItems(this CoinMarkets cm)
+  public static IEnumerable<IMoBroItem> MapToItems(this CoinMarkets cm, string currency)
   {
     // one category per coin
     var coinId = cm.Id;
@@ -20,20 +20,23 @@ public static class CoinMarketsExtensions
       .WithLabel($"Coin: {cm.Name}")
       .Build();
 
+    // parse currency type
+    var currencyType = Enum.Parse<CoreMetricTypeCurrency>(currency.ToUpper());
+
     // all metrics of that coin
     yield return CoreMetric(categoryId, coinId, "symbol", CoreMetricType.Text, true);
     yield return CoreMetric(categoryId, coinId, "name", CoreMetricType.Text, true);
-    yield return CurrMetric(categoryId, coinId, "current_price");
-    yield return CurrMetric(categoryId, coinId, "market_cap");
+    yield return CurrMetric(categoryId, coinId, "current_price", currencyType);
+    yield return CurrMetric(categoryId, coinId, "market_cap", currencyType);
     yield return CoreMetric(categoryId, coinId, "market_cap_rank", CoreMetricType.Numeric);
-    yield return CurrMetric(categoryId, coinId, "total_volume");
-    yield return CurrMetric(categoryId, coinId, "high_24h");
-    yield return CurrMetric(categoryId, coinId, "low_24h");
-    yield return CurrMetric(categoryId, coinId, "price_change_24h");
+    yield return CurrMetric(categoryId, coinId, "total_volume", currencyType);
+    yield return CurrMetric(categoryId, coinId, "high_24h", currencyType);
+    yield return CurrMetric(categoryId, coinId, "low_24h", currencyType);
+    yield return CurrMetric(categoryId, coinId, "price_change_24h", currencyType);
     yield return CoreMetric(categoryId, coinId, "price_change_percentage_24h", CoreMetricType.Usage);
     yield return CoreMetric(categoryId, coinId, "circulating_supply", CoreMetricType.Numeric);
     yield return CoreMetric(categoryId, coinId, "total_supply", CoreMetricType.Numeric);
-    yield return CurrMetric(categoryId, coinId, "ath");
+    yield return CurrMetric(categoryId, coinId, "ath", currencyType);
     yield return CoreMetric(categoryId, coinId, "ath_change_percentage", CoreMetricType.Usage);
     yield return CoreMetric(categoryId, coinId, "ath_date", CoreMetricType.DateTime);
   }
@@ -61,17 +64,17 @@ public static class CoinMarketsExtensions
   private static DateTime GetLastUpdated(this CoinMarkets coinMarkets) =>
     coinMarkets.LastUpdated?.UtcDateTime ?? DateTime.UtcNow;
 
-  private static IMetric CurrMetric(string categoryId, string coinId, string key, bool isStatic = false) =>
+  private static Metric CurrMetric(string categoryId, string coinId, string key, CoreMetricTypeCurrency currency) =>
     MoBroItem.CreateMetric()
       .WithId(MetricId(coinId, key))
       .WithLabel($"m_coins_{key}_label", $"m_coins_{key}_desc")
-      .OfType(Ids.TypeCurrencyId)
+      .OfType(currency)
       .OfCategory(categoryId)
       .OfNoGroup()
-      .AsStaticValue(isStatic)
+      .AsDynamicValue()
       .Build();
 
-  private static IMetric CoreMetric(string categoryId, string coinId, string key, CoreMetricType type,
+  private static Metric CoreMetric(string categoryId, string coinId, string key, CoreMetricType type,
     bool isStatic = false) =>
     MoBroItem.CreateMetric()
       .WithId(MetricId(coinId, key))

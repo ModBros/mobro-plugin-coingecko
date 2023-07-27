@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using MoBro.Plugin.CoinGecko.Extensions;
 using MoBro.Plugin.SDK;
 using MoBro.Plugin.SDK.Builders;
-using MoBro.Plugin.SDK.Enums;
 using MoBro.Plugin.SDK.Exceptions;
 using MoBro.Plugin.SDK.Services;
 using Newtonsoft.Json;
@@ -19,8 +18,6 @@ namespace MoBro.Plugin.CoinGecko;
 
 public class Plugin : IMoBroPlugin
 {
-  private static readonly TimeSpan InitialDelay = TimeSpan.FromSeconds(5);
-
   private const string HttpClientUserAgent = ".NET/7.0 MoBroPlugin (+https://mobro.app)";
 
   // injected by MoBro
@@ -64,7 +61,7 @@ public class Plugin : IMoBroPlugin
     await RegisterMetrics();
 
     // schedule a recurring task to update the metrics
-    _scheduler.Interval(UpdateMetrics, _updateFrequency, InitialDelay);
+    _scheduler.Interval(UpdateMetrics, _updateFrequency, _updateFrequency);
   }
 
   private async Task ParseSettings()
@@ -98,18 +95,6 @@ public class Plugin : IMoBroPlugin
 
   private void RegisterTypesAndCategories()
   {
-    // register currency metric type
-    _service.Register(MoBroItem.CreateMetricType()
-      .WithId(Ids.TypeCurrencyId)
-      .WithLabel($"{Ids.TypeCurrencyId}_{_currency}_label")
-      .OfValueType(MetricValueType.Numeric)
-      .WithBaseUnit(b => b
-        .WithLabel($"{Ids.TypeCurrencyId}_{_currency}_unit_label")
-        .WithAbbreviation(GetCurrencySymbol())
-        // .WithAbbreviation($"t_currency_{_currency}_unit_abbrev")
-        .Build()
-      ).Build());
-
     // register global category
     _service.Register(MoBroItem.CreateCategory()
       .WithId(Ids.CategoryGlobalId)
@@ -120,12 +105,15 @@ public class Plugin : IMoBroPlugin
   private async Task RegisterMetrics()
   {
     // global metrics
-    _service.Register(GlobalDataExtensions.MapToItems());
+    var global = await _globalClient.GetGlobal();
+    _service.Register(global.Data.MapToItems(_currency));
+    _service.UpdateMetricValues(global.Data.MapToMetricValues(_currency));
 
     // coin metrics
     foreach (var cm in await GetCoinMarkets())
     {
-      _service.Register(cm.MapToItems());
+      _service.Register(cm.MapToItems(_currency));
+      _service.UpdateMetricValues(cm.MapToMetricValues());
     }
   }
 
@@ -165,26 +153,6 @@ public class Plugin : IMoBroPlugin
       throw new PluginDependencyException("Failed to fetch data from CoinGecko: " + e.Message, e);
     }
   }
-
-  // temporary workaround for localization bug in service
-  private string GetCurrencySymbol() => _currency switch
-  {
-    "btc" => "BTC",
-    "eth" => "ETH",
-    "eur" => "€",
-    "usd" => "$",
-    "aud" => "A$",
-    "gbp" => "£",
-    "chf" => "CHF",
-    "pln" => "zł",
-    "cad" => "C$",
-    "huf" => "Ft",
-    "nok" => "kr",
-    "sek" => "kr",
-    "czk" => "Kč",
-    "uah" => "₴",
-    _ => throw new ArgumentOutOfRangeException()
-  };
 
   public void Dispose()
   {

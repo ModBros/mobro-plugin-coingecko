@@ -32,14 +32,6 @@
       "required": true,
       "options": [
         {
-          "label": "t_currency_btc_label",
-          "value": "btc"
-        },
-        {
-          "label": "t_currency_eth_label",
-          "value": "eth"
-        },
-        {
           "label": "t_currency_eur_label",
           "value": "eur"
         },
@@ -52,36 +44,56 @@
           "value": "aud"
         },
         {
-          "label": "t_currency_gbp_label",
-          "value": "gbp"
+          "label": "t_currency_cad_label",
+          "value": "cad"
         },
         {
           "label": "t_currency_chf_label",
           "value": "chf"
         },
         {
-          "label": "t_currency_pln_label",
-          "value": "pln"
+          "label": "t_currency_cny_label",
+          "value": "cny"
         },
         {
-          "label": "t_currency_cad_label",
-          "value": "cad"
+          "label": "t_currency_czk_label",
+          "value": "czk"
+        },
+        {
+          "label": "t_currency_dkk_label",
+          "value": "dkk"
+        },
+        {
+          "label": "t_currency_gbp_label",
+          "value": "gbp"
         },
         {
           "label": "t_currency_huf_label",
           "value": "huf"
         },
         {
+          "label": "t_currency_inr_label",
+          "value": "inr"
+        },
+        {
+          "label": "t_currency_jpy_label",
+          "value": "jpy"
+        },
+        {
           "label": "t_currency_nok_label",
           "value": "nok"
+        },
+        {
+          "label": "t_currency_pln_label",
+          "value": "pln"
         },
         {
           "label": "t_currency_sek_label",
           "value": "sek"
         },
         {
-          "label": "t_currency_czk_label",
-          "value": "czk"
+          "label": "t_currency_try_label",
+          "value": "try"
         },
         {
           "label": "t_currency_uah_label",

@@ -10,11 +10,13 @@ namespace MoBro.Plugin.CoinGecko.Extensions;
 
 public static class GlobalDataExtensions
 {
-  public static IEnumerable<IMoBroItem> MapToItems()
+  public static IEnumerable<IMoBroItem> MapToItems(this GlobalData gd, string currency)
   {
+    var currencyType = Enum.Parse<CoreMetricTypeCurrency>(currency.ToUpper());
+
     yield return CoreMetric("active_cryptocurrencies", CoreMetricType.Numeric);
-    yield return CurrMetric("total_market_cap");
-    yield return CurrMetric("total_volume");
+    yield return CurrMetric("total_market_cap", currencyType);
+    yield return CurrMetric("total_volume", currencyType);
     yield return CoreMetric("market_cap_percentage_btc", CoreMetricType.Usage);
     yield return CoreMetric("market_cap_percentage_eth", CoreMetricType.Usage);
   }
@@ -35,17 +37,17 @@ public static class GlobalDataExtensions
       : DateTimeOffset.FromUnixTimeSeconds(gd.UpdatedAt.Value).UtcDateTime;
   }
 
-  private static IMetric CurrMetric(string key) =>
+  private static Metric CurrMetric(string key, CoreMetricTypeCurrency currency) =>
     MoBroItem.CreateMetric()
       .WithId(MetricId(key))
       .WithLabel($"m_global_{key}_label", $"m_global_{key}_desc")
-      .OfType(Ids.TypeCurrencyId)
+      .OfType(currency)
       .OfCategory(Ids.CategoryGlobalId)
       .OfNoGroup()
       .AsDynamicValue()
       .Build();
 
-  private static IMetric CoreMetric(string key, CoreMetricType type) =>
+  private static Metric CoreMetric(string key, CoreMetricType type) =>
     MoBroItem.CreateMetric()
       .WithId(MetricId(key))
       .WithLabel($"m_global_{key}_label", $"m_global_{key}_desc")
