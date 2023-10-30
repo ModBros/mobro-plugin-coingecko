@@ -7,7 +7,6 @@
         <Company>ModBros OG</Company>
         <Product>MoBro</Product>
         <Description>CoinGecko Plugin for MoBro</Description>
-        <IsPackable>false</IsPackable>
         <Title>MoBro CoinGecko Plugin</Title>
         <Copyright>(C) ModBros OG 2023</Copyright>
         <PackageProjectUrl>www.mod-bros.com</PackageProjectUrl>
@@ -16,6 +15,8 @@
         <Nullable>enable</Nullable>
         <OutputType>Exe</OutputType>
         <EnableDynamicLoading>true</EnableDynamicLoading>
+        <UseAppHost>false</UseAppHost>
+        <SelfContained>false</SelfContained>
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
         <InvariantGlobalization>true</InvariantGlobalization>

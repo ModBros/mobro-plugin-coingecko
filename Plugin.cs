@@ -78,15 +78,20 @@ public class Plugin : IMoBroPlugin
     var coinsCsv = _settings.GetValue<string>(Ids.SettingCoins, "");
     if (!string.IsNullOrWhiteSpace(coinsCsv))
     {
-      var supportedCoins = (await _coinsClient.GetCoinList())
-        .DistinctBy(c => c.Symbol)
-        .ToDictionary(c => c.Symbol, c => c.Id);
+      // coins as given by the settings
+      var settingsCoins = coinsCsv.Split(",")
+        .Select(s => s.Trim().ToLower());
 
-      _coinIds = coinsCsv.Split(",")
-        .Select(s => s.Trim().ToLower())
-        .Select(s => supportedCoins.GetValueOrDefault(s))
-        .Where(s => s is not null)
-        .Select(s => s!)
+      // all possible coin ids (symbol matching the settings)
+      var coinIds = (await _coinsClient.GetCoinList())
+        .Where(c => settingsCoins.Contains(c.Symbol.ToLower()))
+        .Select(c => c.Id)
+        .ToArray();
+
+      // take the coin with the highest market cap for each symbol
+      _coinIds = (await GetCoinMarkets(coinIds, _currency))
+        .DistinctBy(cm => cm.Symbol)
+        .Select(cm => cm.Id)
         .ToArray();
     }
 
@@ -110,7 +115,7 @@ public class Plugin : IMoBroPlugin
     _service.UpdateMetricValues(global.Data.MapToMetricValues(_currency));
 
     // coin metrics
-    foreach (var cm in await GetCoinMarkets())
+    foreach (var cm in await GetCoinMarkets(_coinIds, _currency))
     {
       _service.Register(cm.MapToItems(_currency));
       _service.UpdateMetricValues(cm.MapToMetricValues());
@@ -124,23 +129,23 @@ public class Plugin : IMoBroPlugin
     _service.UpdateMetricValues(global.Data.MapToMetricValues(_currency));
 
     // update coin metrics
-    foreach (var cm in GetCoinMarkets().GetAwaiter().GetResult())
+    foreach (var cm in GetCoinMarkets(_coinIds, _currency).GetAwaiter().GetResult())
     {
       _service.UpdateMetricValues(cm.MapToMetricValues());
     }
   }
 
-  private async Task<IEnumerable<CoinMarkets>> GetCoinMarkets()
+  private async Task<IEnumerable<CoinMarkets>> GetCoinMarkets(string[] coinIds, string currency)
   {
-    if (_coinIds.Length <= 0) return Enumerable.Empty<CoinMarkets>();
+    if (coinIds.Length <= 0) return Enumerable.Empty<CoinMarkets>();
 
     try
     {
       return await _coinsClient.GetCoinMarkets(
-        _currency,
-        _coinIds,
+        currency,
+        coinIds,
         OrderField.MarketCapDesc,
-        _coinIds.Length,
+        coinIds.Length,
         1,
         false,
         null,
@@ -152,10 +157,5 @@ public class Plugin : IMoBroPlugin
       _logger.LogError(e, "Failed to fetch data from CoinGecko API");
       throw new PluginDependencyException("Failed to fetch data from CoinGecko: " + e.Message, e);
     }
-  }
-
-  public void Dispose()
-  {
-    // nothing to dispose
   }
 }
