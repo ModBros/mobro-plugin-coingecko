@@ -4,12 +4,12 @@
         <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>MoBro.Plugin.CoinGecko</RootNamespace>
         <Authors>ModBros</Authors>
-        <Company>ModBros OG</Company>
+        <Company>ModBros KG</Company>
         <Product>MoBro</Product>
         <Description>CoinGecko Plugin for MoBro</Description>
         <Title>MoBro CoinGecko Plugin</Title>
-        <Copyright>(C) ModBros OG 2023</Copyright>
-        <PackageProjectUrl>www.mod-bros.com</PackageProjectUrl>
+        <Copyright>(C) ModBros KG 2024</Copyright>
+        <PackageProjectUrl>https://mobro.app</PackageProjectUrl>
         <VersionPrefix>0.0.2</VersionPrefix>
         <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
