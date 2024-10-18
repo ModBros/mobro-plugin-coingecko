@@ -54,7 +54,7 @@ public static class CoinMarketsExtensions
     yield return new MetricValue(MetricId(cm.Id, "low_24h"), cm.GetLastUpdated(), cm.Low24H);
     yield return new MetricValue(MetricId(cm.Id, "price_change_24h"), cm.GetLastUpdated(), cm.PriceChange24H);
     yield return new MetricValue(MetricId(cm.Id, "price_change_percentage_24h"), cm.GetLastUpdated(), cm.PriceChangePercentage24H);
-    yield return new MetricValue(MetricId(cm.Id, "circulating_supply"), cm.GetLastUpdated(), cm.CirculatingSupply is null ? null : double.Parse(cm.CirculatingSupply));
+    yield return new MetricValue(MetricId(cm.Id, "circulating_supply"), cm.GetLastUpdated(), cm.CirculatingSupply);
     yield return new MetricValue(MetricId(cm.Id, "total_supply"), cm.GetLastUpdated(), cm.TotalSupply);
     yield return new MetricValue(MetricId(cm.Id, "ath"), cm.GetLastUpdated(), cm.Ath);
     yield return new MetricValue(MetricId(cm.Id, "ath_change_percentage"), cm.GetLastUpdated(), cm.AthChangePercentage);
