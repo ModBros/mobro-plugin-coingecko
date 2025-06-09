@@ -10,7 +10,7 @@
         <Title>MoBro CoinGecko Plugin</Title>
         <Copyright>(C) ModBros KG 2025</Copyright>
         <PackageProjectUrl>https://mobro.app</PackageProjectUrl>
-        <VersionPrefix>0.0.2</VersionPrefix>
+        <VersionPrefix>1.0.0</VersionPrefix>
         <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
         <OutputType>Exe</OutputType>
