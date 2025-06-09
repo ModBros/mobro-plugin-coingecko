@@ -2,9 +2,17 @@
   "name": "modbros_coingecko",
   "displayName": "CoinGecko",
   "author": "ModBros",
-  "description": null,
+  "description": "Integrates cryptocurrency metrics powered by CoinGecko",
   "assembly": "Plugin.CoinGecko.dll",
   "localization": "Resources/Localization",
+  "repository": "https://github.com/ModBros/mobro-plugin-coingecko",
+  "homepage": null,
+  "tags": [
+    "crypto",
+    "coin",
+    "cryptocurrency",
+    "bitcoin"
+  ],
   "settings": [
     {
       "type": "number",
