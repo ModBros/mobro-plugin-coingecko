@@ -10,31 +10,36 @@ namespace MoBro.Plugin.CoinGecko.Extensions;
 
 public static class GlobalDataExtensions
 {
-  public static IEnumerable<IMoBroItem> MapToItems(this GlobalData gd, string currency)
+  extension(GlobalData gd)
   {
-    var currencyType = Enum.Parse<CoreMetricTypeCurrency>(currency.ToUpper());
+    public IEnumerable<IMoBroItem> MapToItems(string currency)
+    {
+      var currencyType = Enum.Parse<CoreMetricTypeCurrency>(currency.ToUpper());
 
-    yield return CoreMetric("active_cryptocurrencies", CoreMetricType.Numeric);
-    yield return CurrMetric("total_market_cap", currencyType);
-    yield return CurrMetric("total_volume", currencyType);
-    yield return CoreMetric("market_cap_percentage_btc", CoreMetricType.Usage);
-    yield return CoreMetric("market_cap_percentage_eth", CoreMetricType.Usage);
-  }
+      yield return CoreMetric("active_cryptocurrencies", CoreMetricType.Numeric);
+      yield return CurrMetric("total_market_cap", currencyType);
+      yield return CurrMetric("total_volume", currencyType);
+      yield return CoreMetric("market_cap_percentage_btc", CoreMetricType.Usage);
+      yield return CoreMetric("market_cap_percentage_eth", CoreMetricType.Usage);
+    }
 
-  public static IEnumerable<MetricValue> MapToMetricValues(this GlobalData gd, string currency)
-  {
-    yield return new MetricValue(MetricId("active_cryptocurrencies"), gd.GetLastUpdated(), gd.ActiveCryptocurrencies);
-    yield return new MetricValue(MetricId("total_market_cap"), gd.GetLastUpdated(), gd.TotalMarketCap[currency]);
-    yield return new MetricValue(MetricId("total_volume"), gd.GetLastUpdated(), gd.TotalVolume[currency]);
-    yield return new MetricValue(MetricId("market_cap_percentage_btc"), gd.GetLastUpdated(), gd.MarketCapPercentage["btc"]);
-    yield return new MetricValue(MetricId("market_cap_percentage_eth"), gd.GetLastUpdated(), gd.MarketCapPercentage["eth"]);
-  }
+    public IEnumerable<MetricValue> MapToMetricValues(string currency)
+    {
+      yield return new MetricValue(MetricId("active_cryptocurrencies"), gd.GetLastUpdated(), gd.ActiveCryptocurrencies);
+      yield return new MetricValue(MetricId("total_market_cap"), gd.GetLastUpdated(), gd.TotalMarketCap[currency]);
+      yield return new MetricValue(MetricId("total_volume"), gd.GetLastUpdated(), gd.TotalVolume[currency]);
+      yield return new MetricValue(MetricId("market_cap_percentage_btc"), gd.GetLastUpdated(),
+        gd.MarketCapPercentage["btc"]);
+      yield return new MetricValue(MetricId("market_cap_percentage_eth"), gd.GetLastUpdated(),
+        gd.MarketCapPercentage["eth"]);
+    }
 
-  private static DateTime GetLastUpdated(this GlobalData gd)
-  {
-    return gd.UpdatedAt is null
-      ? DateTime.UtcNow
-      : DateTimeOffset.FromUnixTimeSeconds(gd.UpdatedAt.Value).UtcDateTime;
+    private DateTime GetLastUpdated()
+    {
+      return gd.UpdatedAt is null
+        ? DateTime.UtcNow
+        : DateTimeOffset.FromUnixTimeSeconds(gd.UpdatedAt.Value).UtcDateTime;
+    }
   }
 
   private static Metric CurrMetric(string key, CoreMetricTypeCurrency currency) =>
