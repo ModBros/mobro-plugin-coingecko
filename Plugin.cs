@@ -18,7 +18,7 @@ namespace MoBro.Plugin.CoinGecko;
 
 public class Plugin : IMoBroPlugin
 {
-  private const string HttpClientUserAgent = ".NET/7.0 MoBroPlugin (+https://mobro.app)";
+  private const string HttpClientUserAgent = ".NET/10.0 MoBroPlugin (+https://mobro.app)";
 
   // injected by MoBro
   private readonly IMoBroService _service;
