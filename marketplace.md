@@ -1,43 +1,49 @@
-Tracks cryptocurrency metrics using data powered by [CoinGecko](https://www.coingecko.com/).
+# Crypto Tracker (CoinGecko)
 
-# Disclaimer
-
-This plugin is created and maintained by ModBros and is not associated with CoinGecko.  
-It uses CoinGecko's public API to retrieve cryptocurrency metrics.
+This plugin integrates real-time cryptocurrency data from [CoinGecko](https://www.coingecko.com/) into your MoBro
+dashboard, tracking everything from your favorite coins to global market dominance.
 
 ---
 
-# Metrics
+## Disclaimer
 
-The following global cryptocurrency market metrics are available:
-
-- Number of active cryptocurrencies
-- Market cap dominance of BTC
-- Market cap dominance of ETH
-- Total market capitalization
-- Total trading volume
-
-For all configured coins (as specified in settings), the plugin provides:
-
-- Symbol
-- Name
-- Current price
-- Circulating supply
-- Total supply
-- Total trading volume
-- 24-hour price change
-- Market capitalization + Market cap rank
-- 24-hour high + 24-hour low
-- All-time high (ATH), ATH change percentage, ATH date
+This plugin is developed by ModBros and is not officially affiliated with CoinGecko.  
+Data is retrieved using the public CoinGecko API.
 
 ---
 
-# Settings
+## Available Metrics
 
-The plugin includes the following configurable options:
+### Individual Coin Metrics
 
-| Setting          | Default | Description                                                 |
-|------------------|---------|-------------------------------------------------------------|
-| Update frequency | 10 min  | Interval (in minutes) for refreshing metrics.               |
-| Coins            | -       | A list of coins to track metrics for (e.g., BTC, ETH, GRC). |
-| Currency         | USD     | The currency to display all metrics in.                     |
+Track any coin (e.g., `BTC`, `ETH`, `SOL`) with detailed statistics:
+
+- **Price & Change**: Current price in your preferred currency and 24h price change.
+- **Market Info**: Market cap, rank, and circulating/total supply.
+- **Performance**: 24h High/Low and All-Time High (ATH) details including date and percentage change.
+
+### Global Market Overview
+
+- **Dominance**: Real-time market cap dominance for **BTC** and **ETH**.
+- **Totals**: Total market capitalization and aggregate trading volume.
+- **Scope**: Number of active cryptocurrencies currently in the market.
+
+---
+
+## Setup
+
+1. **Install** the plugin via the MoBro Marketplace.
+2. **Configuration**:
+   - **Coins**: List the symbols you wish to monitor (e.g., `BTC, ETH, DOGE`).
+   - **Currency**: Set your preferred fiat or crypto currency for value display.
+3. Add the metrics to your MoBro dashboard.
+
+---
+
+## Settings
+
+| Setting              | Default  | Description                                                    |
+|:---------------------|:---------|:---------------------------------------------------------------|
+| **Update Frequency** | `10 min` | How often market data is refreshed via the CoinGecko API.      |
+| **Coins**            | -        | A comma-separated list of symbols to track (e.g., `BTC, ETH`). |
+| **Currency**         | `USD`    | The target currency for all price and market cap metrics.      |
